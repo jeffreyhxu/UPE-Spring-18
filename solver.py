@@ -25,6 +25,8 @@ def game():
             for char in blank:
                 if char.isalpha() or char == '\'':
                     regstr += char
+                if char == '’':
+                    regstr += '\''
                 if char == '_':
                     regstr += '.'
             regex = re.compile(regstr+'(\n)?$', re.I)
@@ -62,10 +64,10 @@ def game():
         json = respond.json()
     # if there was a word that wasn't in the wordlist, add it
     for lyric in json['lyrics'].split():
-        lyric = lyric.translate(str.maketrans('', '', '-",;?!.()'))
+        lyric = lyric.translate(str.maketrans('’', '\'', '-",;?!.()'))
         if lyric not in wordlist:
             wordlist.append(lyric)
-            with open("words.txt", 'w') as file:
+            with open("words.txt", 'a') as file:
                 file.write(lyric+'\n')
             print("added word: " + lyric)
 

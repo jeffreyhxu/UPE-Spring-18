@@ -1,0 +1,5 @@
+To run this submission, simply type python3 solver.py.
+This submission requires the third-party requests library to be installed, which can be done with pip install requests.
+When the submission is run, it will immediately begin playing games. It will output the responses it gets from the
+server, as well as a short message each time it guesses a letter or discovers a word in the server's response it didn't
+know and adds it to the word list.
