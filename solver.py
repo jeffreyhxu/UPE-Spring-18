@@ -4,12 +4,13 @@ import random
 access_token = "JLjje"
 url = "http://upe.42069.fun/"
 
+wordlist = []
+with open("words.txt") as wordfile:
+    for line in wordfile:
+        wordlist.append(line.strip().lower())
+print("wordlist generated")
+
 def game():
-    wordlist = []
-    with open("words.txt") as wordfile:
-        for line in wordfile:
-            wordlist.append(line.strip().lower())
-    print("wordlist generated")
     r = requests.get(url + access_token)
     json = r.json()
     letters_guessed = []
@@ -51,7 +52,7 @@ def game():
         while common in letters_guessed:
             common = random.choice('abcdefghijklmnopqrstuvwxyz')
         for l in letters:
-            if letters[l] > most and l not in letters_guessed:
+            if letters[l] > most and l not in letters_guessed and l.isalpha():
                 most = letters[l]
                 common = l
         print("guessing "+common)
@@ -59,6 +60,14 @@ def game():
         respond = requests.post(url + access_token,
                                 data = {"guess":common})
         json = respond.json()
+    # if there was a word that wasn't in the wordlist, add it
+    for lyric in json['lyrics'].split():
+        lyric = lyric.translate(str.maketrans('', '', '-",;?!.()'))
+        if lyric not in wordlist:
+            wordlist.append(lyric)
+            with open("words.txt", 'w') as file:
+                file.write(lyric+'\n')
+            print("added word: " + lyric)
 
 def reset():
     r = requests.post(url + access_token + "/reset",
@@ -66,11 +75,6 @@ def reset():
     print(r.json())
 
 def findwords(blank):
-    wordlist = []
-    with open("words.txt") as wordfile:
-        for line in wordfile:
-            wordlist.append(line.strip().lower())
-    print("wordlist generated")
     regstr = ''
     for char in blank:
         if char.isalpha() or char == '\'':
@@ -99,4 +103,5 @@ def findwords(blank):
     print(these_letters)
     
 
-
+while True:
+    game()
